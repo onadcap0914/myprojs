@@ -1,24 +1,40 @@
-<?php  
-$lookingForBook = isset($_GET['title']) || isset($_GET['author']);
-?>
+<?php require_once 'functions.php'; ?>
+<! DOCTYPE html >  
+<html lang = "en" >  
+<head >  <meta charset = "UTF-8" >  
+	<title > Bookstore </title >  
+</head >  
+<body >  
+	<div style = "font-family: arial; " >  
+		<p >  
+			<?php 
+			echo loginMessage();
+			?>  
+		</p >  
+			<?php 
+				$booksJson = file_get_contents('books.json');
+				$books = json_decode($booksJson,true);
+				if (isset($_GET['title'])) {
+					echo '<p > The book you are looking for is <b>' . $_GET['title'] . '</b></p >';
+					if (bookingBook($books, $_GET['title']))  {
+						echo 'Booked!';
+						updateBooks($books);
+					} else {
+						echo 'The book is NOT available...';
+					}
+				}else {   
+					echo '<p > You are not looking for a book </p >'; 
+				}
+			?>	
+				<ul> 
+				<?php foreach ($books as $book):?>  
+							<li>
+								<a href="?title=<?php echo $book['title']; ?>"><?php echo printableTitle($book); ?> </a>
+							</li>  
+				<?php endforeach; ?>
+						</ul> 
+	</div>  
+</body>  
+</html> 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Bookstore</title>
-</head>
-<body>
-	<div style="font-family: arial; ">
 
-		<p>You are <?php echo $_COOKIE['username']; ?></p>
-		<p>You lookin' for a book? <?php echo (int) $lookingForBook; ?></p>
-		<p>The book you are looking for is</p>
-			<ul>
-				<li><b>Title</b>: <?php echo $_GET['title']; ?></li> 
-				<li><b>Author</b>: <?php echo $_GET['author']; ?></li>
-			</ul>
-	</div>
-	<?php echo phpinfo(); ?>
-</body>
-</html>
